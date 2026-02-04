@@ -32,6 +32,22 @@ Then I added the elevation profile, querying ARCGis elevation APIs.
 
 <img alt="rtl6300-monitor screenshot 3" src="https://github.com/wildstray/rtl6300-monitor/blob/main/screenshot3.png" width="250" />
 
+## HOWTO
+
+You need:
+
+0) an Askey RTL6300-D354 router (obviously)
+
+1) a web server with PHP (>7.2)
+
+2) a mongodb server
+
+3) CSV files from LTE Italy (if you want mapping feature)
+
+You can load **html** directory into the web server, so you can open index.html. PHP must be allowed in the same directory. You must update the configuration file **config.php** to match your router location, mongodb host and database.
+
+For using mapping, you need to install python requirements and excute import/import_sites.py (it will take a looong time!).
+
 ## Library used
 
 I used these free and open source projects:
