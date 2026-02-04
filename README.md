@@ -14,9 +14,9 @@ https://github.com/cretudorin/askey_rtl6300_5g_cpe
 
 So I created a simple HTML+js (using jQuery) webUI that displays tables containing the informations gathered:
 
-<img alt="rtl6300-monitor screenshot 1" src="https://github.com/wildstray/rtl6300-monitor/blob/main/screenshot1.jpeg" width="250" />
+<img alt="rtl6300-monitor screenshot 1" src="https://github.com/wildstray/rtl6300-monitor/blob/main/screenshot1.png" width="250" />
 
-<img alt="rtl6300-monitor screenshot 2" src="https://github.com/wildstray/rtl6300-monitor/blob/main/screenshot2.jpeg" width="250" />
+<img alt="rtl6300-monitor screenshot 2" src="https://github.com/wildstray/rtl6300-monitor/blob/main/screenshot2.png" width="250" />
 
 I was happy with this, but I discovered that the router sometimes was connecting to a cell tower, sometimes to another cell tower... I were using this website to look for the cell towers, using these parameters: mcc, mnc and enb.
 
@@ -30,7 +30,7 @@ LTE Italy (once a time........ maybe for members?) provided the possibility to d
 Then I wrote some really basic RESTful endpoint to easily configure and obtain CPE location, BTS location by mcc, mnc and enb, BTS list by location. Then I added a map to my webUI with a marker of my home position and a marker of cell tower in use, querying the RESTful endpoints.
 Then I added the elevation profile, querying ARCGis elevation APIs.
 
-<img alt="rtl6300-monitor screenshot 3" src="https://github.com/wildstray/rtl6300-monitor/blob/main/screenshot3.jpeg" width="250" />
+<img alt="rtl6300-monitor screenshot 3" src="https://github.com/wildstray/rtl6300-monitor/blob/main/screenshot3.png" width="250" />
 
 ## Library used
 
