@@ -1,0 +1,40 @@
+.table {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  border-collapse: collapse;
+  width: 800px;
+}
+
+.table td {
+  border: 1px solid #ddd;
+  padding: 4px;
+  width: 380px;
+  text-align: left;
+}
+
+.table th {
+  border: 1px solid #ddd;
+  padding: 4px;
+  text-align: center;
+  background-color: #04AA6D;
+  color: white;
+}
+
+.table tr:nth-child(even){background-color: #f2f2f2;}
+
+.table tr:hover {background-color: #ddd;}
+
+#map {
+  width: 800px;
+  height: 580px;
+}
+
+.center {
+    max-width: max-content;
+    margin: auto;
+    text-align: center;
+}
+
+.leaflet-control-layers-list {
+    text-align: left;
+}
