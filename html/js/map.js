@@ -1,5 +1,6 @@
 var ltegeo = 'ltegeo.php';
 var cpegeo = 'cpegeo.php';
+var arccache = 'arccache.php';
 var cpePoint = [45.0705, 7.6868];
 
 $(document).ready(function () {
@@ -88,7 +89,7 @@ $(document).ready(function () {
     }
     
     function drawElev(path) {
-        var arcgis='https://elevation.arcgis.com/arcgis/rest/services/Tools/ElevationSync/GPServer/Profile/execute';
+        var arcgis=arccache+'?https://elevation.arcgis.com/arcgis/rest/services/Tools/ElevationSync/GPServer/Profile/execute';
         var dataPoints = [];
         var ilf= {fields: [{name: "OID", type: "esriFieldTypeObjectID", alias: "OID"}], 
             geometryType:"esriGeometryPolyline",
