@@ -7,6 +7,7 @@ $lat = (float)$params['lat'];
 $uri = 'mongodb://kasa/lteitaly';
 $manager = new MongoDB\Driver\Manager($config['mongodb']['connection_string']);
 $query = new MongoDB\Driver\Query(['location' => ['$near' => ['$geometry' =>['type' => 'Point','coordinates'=>[$lon, $lat]],'$maxDistance' => intval(10),'$minDistance' => intval(0)]]]);
+$database = $config['mongodb']['database'];
 $collection='sites';
 $cursor = $manager->executeQuery("$database.$collection", $query);
 header('Content-Type: application/json; charset=utf-8');

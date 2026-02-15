@@ -7,6 +7,8 @@
     <link href="css/style.css" rel="stylesheet">
     <!-- jquery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- datatables -->
+    <script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
     <!-- tables -->
     <script src="js/tables.js"></script>
     <!-- leaflet -->
@@ -44,28 +46,30 @@
 <body>
 
 <div class="center">
-<table id="tr069/dev_info" class="table"></table>
-<br/>
-<table id="CMGR/v4_internet_info" class="table"></table>
-<br/>
-<table id="lte/device_info" class="table"></table>
-<br/>
-<table id="lte/apn" class="table"></table>
-<br/>
-<table id="lte/status_info" class="table"></table>
-<br/>
-<table id="lte/signal_info" class="table"></table>
-<br/>
-<table id="lte/cellular_stats" class="table"></table>
-<br/>
-<table id="lte/cellular_info" class="table"></table>
-<br/>
-<table id="lte/cellular_info_ex" class="table"></table>
-<br/>
-<table id="lte/cellular_info_nr5g_sa" class="table"></table>
-<br/>
-<div id="map"></div>
-<br/>
+    <table id="tr069/dev_info" class="table"></table>
+    <br/>
+    <table id="CMGR/v4_internet_info" class="table refresh"></table>
+    <br/>
+    <table id="lte/device_info" class="table"></table>
+    <br/>
+    <table id="lte/apn" class="table"></table>
+    <br/>
+    <table id="lte/status_info" class="table refresh"></table>
+    <br/>
+    <table id="lte/cellular_info" class="table refresh"></table>
+    <br/>
+    <table id="lte/signal_info" class="table refresh"></table>
+    <br/>
+    <!--
+    <table id="lte/cellular_stats" class="table refresh"></table>
+    <br/>
+    <table id="lte/cellular_info_ex" class="table refresh"></table>
+    <br/>
+    <table id="lte/cellular_info_nr5g_sa" class="table refresh"></table>
+    <br/>
+    -->
+    <div id="map"></div>
+    <br/>
 </div>
 
 </body>

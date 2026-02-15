@@ -1,41 +1,50 @@
 var lteurl='http://172.20.168.1/restful/';
+var refresh=30000;
 
-function makeTable(table, obj) {
-    if (table.id != '') {
-        tRow = $('<tr>');
-        title = table.id.substring(table.id.search('/')+1, table.id.length);
-        tCell = $('<th>').attr('colspan', 2).text(title);
-    };
-    $(table).append(tRow.append(tCell));
-    $.each(obj, function(key, val) {
-        tRow = $('<tr>');
-        tCell = $('<td>').text(key);
-        $(table).append(tRow.append(tCell));
-        tCell = $('<td>').text(val);
-        $(table).append(tRow.append(tCell));
+function makeTable(table, data) {
+    title = table.id.substring(table.id.search('/')+1, table.id.length);
+    $(table).dataTable({
+        "data": data,
+        "columns": [{ "title": title}, null]
     });
-};
+    $('thead th:first-child').attr('colspan',2);
+    $('thead th:last-child').hide();
+}
+
+function load(url, table) {
+    $.ajax({ 
+        type: "GET",
+        dataType: "json",
+        url: url+table.id,
+        success: function(data){
+            if (data.Status == "fail")
+                return;
+            if (data.Result.hasOwnProperty('data'))
+            {
+                makeTable(table, data.Result.data.flatMap(obj => [["-", "-"], ...Object.entries(obj)]));
+            } else {
+                makeTable(table, Object.entries(data.Result));
+            }
+        }
+    });
+}
 
 $(document).ready(function () {
-    $('.table').each(function(index, element) {
-        $.ajax({ 
-            type: "GET",
-            dataType: "json",
-            url: lteurl+element.id,
-            success: function(data){
-                var ex = false;
-                $.each(data.Result, function(key, val) {
-                    if (key == "data") {
-                        ex = true;
-                        $.each(val, function(ikey, ival) {
-                            makeTable(element, ival);
-                        });
-                    };
-                });
-                if (!ex) {
-                    makeTable(element, data.Result);
-                };
-            }
-        });
+    $.extend($.fn.dataTable.defaults, {
+        searching: false,
+        ordering:  false,
+        paging: false,
+        info: false,
+        destroy: true
+    });
+
+    $('.table').each(function(index, table) {
+        load(lteurl, table);
     });
 });
+
+setInterval(function(){
+    $('.table.refresh').each(function(index, table) {
+        load(lteurl, table);
+    });
+}, refresh);

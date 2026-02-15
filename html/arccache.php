@@ -4,7 +4,7 @@ $config = require 'config.php';
 $url=$_SERVER['QUERY_STRING'];
 $ua=$_SERVER['HTTP_USER_AGENT'];
 $data = $_POST;
-$headers = ["Content-type: application/x-www-form-urlencoded", "User-Agent: $ua"];
+$headers = ["Content-type: application/x-www-form-urlencoded", "User-Agent: $ua", "Upgrade-Insecure-Requests: 1"];
 $options = [
     'http' => [
         'header' => $headers,
@@ -58,3 +58,4 @@ if ($cursor->isDead())
 foreach ($cursor as $doc) {
     echo $doc->response, PHP_EOL;
 }
+

@@ -7,6 +7,7 @@ $mnc = (int)$params['mnc'];
 $enb = (int)$params['enb'];
 $manager = new MongoDB\Driver\Manager($config['mongodb']['connection_string']);
 $query = new MongoDB\Driver\Query(['mcc' => $mcc, 'mnc' => $mnc, 'enb' => $enb]);
+$database = $config['mongodb']['database'];
 $collection='sites';
 $cursor = $manager->executeQuery("$database.$collection", $query);
 header('Content-Type: application/json; charset=utf-8');
