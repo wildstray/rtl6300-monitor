@@ -33,6 +33,7 @@ $(document).ready(function () {
     var controlElevation = L.control.elevation(elevationOptions).addTo(map);
     var group = L.featureGroup().addTo(map);
     var markerArray = [];
+    var lastGCI = 0;
 
     $.ajax({ 
         type: "GET",
@@ -47,9 +48,9 @@ $(document).ready(function () {
             var cpeMarker = L.marker(cpePoint, {icon: cpeIcon}).addTo(map).bindPopup('Home<br/>'+cpePoint);
             markerArray.push(cpeMarker);
 //            drawMarkers();
-            drawCell();
+            getCellularInfo();
             setInterval(function() {
-                drawCell();
+                getCellularInfo();
             }, refresh);
         }
     });
@@ -77,42 +78,50 @@ $(document).ready(function () {
         map.fitBounds(group.getBounds());
     }
 
-    function drawCell() {
+    function drawCell(mcc, mnc, enb, type) {
+        if (type == "5G_NSA" || type == "5G_SA") {
+            var btsIcon = L.IconMaterial.icon({
+                icon: '5g',
+                markerColor: 'rgba(6,6,255,0.5)',
+            });
+        } else {
+            var btsIcon = L.IconMaterial.icon({
+                icon: '4g_mobiledata',
+                markerColor: 'rgba(6,255,6,0.5)',
+            });
+        }
         $.ajax({ 
             type: "GET",
             dataType: "json",
-            url: lteurl+'lte/cellular_info',
+            url: ltegeo+'?mcc='+mcc+'&mnc='+mnc+'&enb='+enb,
             success: function(data){
+                btsPoint = [data.location.coordinates[1],data.location.coordinates[0]];
+                var distance = getDistance(cpePoint, btsPoint).toFixed(2);
+                btsMarker = L.marker(btsPoint, {icon: btsIcon}).addTo(map).bindPopup('BTS ' + type + ' ' + enb + '<br>distance: ' + distance + 'm')
+                markerArray.push(btsMarker);
+                drawMarkers();
+                markerArray.pop();
+                drawProfile([[cpePoint[1],cpePoint[0]], [btsPoint[1],btsPoint[0]]]);
+            }
+        });
+    }
+
+    function getCellularInfo() {
+        $.ajax({ 
+            type: "GET",
+            dataType: "json",
+            url: lteurl+'lte/cellular_info?_='+Date.now(),
+            success: function(data){
+                var gci = data.Result.gci;
                 var mcc = data.Result.mcc;
                 var mnc = data.Result.mnc;
                 var tac = data.Result.tac;
                 var enb = data.Result.enb;
                 var type = data.Result.type;
-                if (type == "5G_NSA" || type == "5G_SA") {
-                    var btsIcon = L.IconMaterial.icon({
-                        icon: '5g',
-                        markerColor: 'rgba(6,6,255,0.5)',
-                    });
-                } else {
-                    var btsIcon = L.IconMaterial.icon({
-                        icon: '4g_mobiledata',
-                        markerColor: 'rgba(6,255,6,0.5)',
-                    });
+                if(lastGCI != gci) {
+                    lastGCI = gci;
+                    drawCell(mcc, mnc, enb, type);
                 }
-                $.ajax({ 
-                    type: "GET",
-                    dataType: "json",
-                    url: ltegeo+'?mcc='+mcc+'&mnc='+mnc+'&enb='+enb,
-                    success: function(data){
-                        btsPoint = [data.location.coordinates[1],data.location.coordinates[0]];
-                        var distance = getDistance(cpePoint, btsPoint).toFixed(2);
-                        btsMarker = L.marker(btsPoint, {icon: btsIcon}).addTo(map).bindPopup('BTS ' + type + ' ' + enb + '<br>distance: ' + distance + 'm')
-                        markerArray.push(btsMarker);
-                        drawMarkers();
-                        markerArray.pop();
-                        drawProfile([[cpePoint[1],cpePoint[0]], [btsPoint[1],btsPoint[0]]]);
-                    }
-                });
             }
         });
     }
