@@ -39,3 +39,6 @@
     text-align: left;
 }
 
+.leaflet-popup {
+    margin-bottom: 60px !important;
+}

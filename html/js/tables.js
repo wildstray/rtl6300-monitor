@@ -1,5 +1,5 @@
 var lteurl='http://172.20.168.1/restful/';
-var refresh=30000;
+var refresh=5000;
 
 function makeTable(table, data) {
     title = table.id.substring(table.id.search('/')+1, table.id.length);
@@ -29,7 +29,7 @@ function load(url, table) {
     });
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
     $.extend($.fn.dataTable.defaults, {
         searching: false,
         ordering:  false,
@@ -41,10 +41,10 @@ $(document).ready(function () {
     $('.table').each(function(index, table) {
         load(lteurl, table);
     });
-});
 
-setInterval(function(){
-    $('.table.refresh').each(function(index, table) {
-        load(lteurl, table);
-    });
-}, refresh);
+    setInterval(function() {
+        $('.table.refresh').each(function(index, table) {
+            load(lteurl, table);
+        });
+    }, refresh);
+});
