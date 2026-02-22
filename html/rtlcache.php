@@ -4,8 +4,8 @@ $config = require 'config.inc.php';
 $url=$_SERVER['QUERY_STRING'];
 $ua=$_SERVER['HTTP_USER_AGENT'];
 $data = $_POST;
-$lteurl = $config['config']['lteurl'];
-$mc = substr($url, strpos($url, $lteurl) + strlen($lteurl));
+$cpeurl = $config['config']['cpeurl'];
+$mc = substr($url, strpos($url, '/restful') + strlen('/restful'));
 
 function rtlcache($url, $manager, $database, $collection) {
     $options = [
@@ -22,6 +22,10 @@ function rtlcache($url, $manager, $database, $collection) {
     $mc = json_decode($response)->ModuleCommand;
     $result = json_decode($response)->Result;
 
+    if ($status == 'fail') {
+        return $response;
+    }
+
     $data = ['Status' => $status, 'ModuleCommand' => $mc, 'Result' => $result];
     $filter = ['ModuleCommand' => $mc];
     $update = ['$set' => $data];
@@ -36,8 +40,23 @@ function rtlcache($url, $manager, $database, $collection) {
         die();
     }
 
+    $command = new MongoDB\Driver\Command([
+        'listIndexes' => $collection,
+    ]);
+    try {
+        $cursor = $manager->executeCommand($database, $command);
+    } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
+        http_response_code(500);
+        echo "listIndexes failed: " . $e->getMessage() . PHP_EOL;
+        die();
+    }
+    $indexes = array_map(fn($index) => $index->name, $cursor->toArray());
+    if (in_array('mc_index', $indexes)) {
+        return $response;
+    }
+
     $indexKey = ['ModuleCommand' => 1];
-    $createIndexCommand = new MongoDB\Driver\Command([
+    $command = new MongoDB\Driver\Command([
         'createIndexes' => $collection,
         'indexes' => [[
             'key' => $indexKey,
@@ -46,10 +65,10 @@ function rtlcache($url, $manager, $database, $collection) {
         ]]
     ]);
     try {
-        $manager->executeCommand($database, $createIndexCommand);
+        $manager->executeCommand($database, $command);
     } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
         http_response_code(500);
-        echo "Index failed: " . $e->getMessage() . PHP_EOL;
+        echo "createIndexes failed: " . $e->getMessage() . PHP_EOL;
         die();
     }
     return $response;
@@ -70,11 +89,14 @@ if ($cursor->isDead())
 {
     $response = rtlcache($url, $manager, $database, $collection);
     echo $response, PHP_EOL;
+    ob_end_flush();
+    exit;
 }
 foreach ($cursor as $doc) {
     echo json_encode(['Status' => $doc->Status, 'ModuleCommand' => $doc->ModuleCommand, 'Result' => $doc->Result]), PHP_EOL;
 }
-ob_flush();
+ob_end_flush();
 flush();
 fastcgi_finish_request();
 rtlcache($url, $manager, $database, $collection);
+
