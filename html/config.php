@@ -1,11 +1,9 @@
 <?php
 // config.php
-return [
-    'mongodb' => [
-        'connection_string' => 'mongodb://mongodb',
-        'database' => 'lteitaly',
-    ],
-    'home' => [
-        'location' => [45.0705, 7.6868],
-    ],
-];
+$config = require 'config.inc.php';
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Expires: 0');
+echo json_encode($config['config']), PHP_EOL;

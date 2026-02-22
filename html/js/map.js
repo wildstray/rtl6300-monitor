@@ -1,8 +1,3 @@
-var ltegeo = 'ltegeo.php';
-var cpegeo = 'cpegeo.php';
-var arccache = 'arccache.php';
-var cpePoint = [45.0705, 7.6868];
-
 $(document).ready(function () {
 
     var map = L.map('map');
@@ -35,25 +30,18 @@ $(document).ready(function () {
     var markerArray = [];
     var lastGCI = 0;
 
-    $.ajax({ 
-        type: "GET",
-        dataType: "json",
-        url: cpegeo,
-        success: function(data){
-            cpePoint = data;
-            var cpeIcon = L.IconMaterial.icon({
-                icon: 'home',
-                markerColor: 'rgba(255,6,6,0.5)',
-            })
-            var cpeMarker = L.marker(cpePoint, {icon: cpeIcon}).addTo(map).bindPopup('Home<br/>'+cpePoint);
-            markerArray.push(cpeMarker);
-//            drawMarkers();
-            getCellularInfo();
-            setInterval(function() {
-                getCellularInfo();
-            }, refresh);
-        }
-    });
+    var cpePoint = config.home;
+    var cpeIcon = L.IconMaterial.icon({
+        icon: 'home',
+        markerColor: 'rgba(255,6,6,0.5)',
+    })
+    var cpeMarker = L.marker(cpePoint, {icon: cpeIcon}).addTo(map).bindPopup('Home<br/>'+cpePoint);
+    markerArray.push(cpeMarker);
+//    drawMarkers();
+    getCellularInfo();
+    setInterval(function() {
+        getCellularInfo();
+    }, config.refresh);
 
     function getDistance(origin, destination) {
         var lon1 = origin[1]*Math.PI/180,
@@ -93,7 +81,7 @@ $(document).ready(function () {
         $.ajax({ 
             type: "GET",
             dataType: "json",
-            url: ltegeo+'?mcc='+mcc+'&mnc='+mnc+'&enb='+enb,
+            url: 'ltegeo.php?mcc='+mcc+'&mnc='+mnc+'&enb='+enb,
             success: function(data){
                 btsPoint = [data.location.coordinates[1],data.location.coordinates[0]];
                 var distance = getDistance(cpePoint, btsPoint).toFixed(2);
@@ -110,7 +98,7 @@ $(document).ready(function () {
         $.ajax({ 
             type: "GET",
             dataType: "json",
-            url: lteurl+'lte/cellular_info?_='+Date.now(),
+            url: config.cpeurl+'/lte/cellular_info',
             success: function(data){
                 var gci = data.Result.gci;
                 var mcc = data.Result.mcc;
@@ -127,7 +115,6 @@ $(document).ready(function () {
     }
 
     function drawProfile(path) {
-        var arcgis=arccache+'?https://elevation.arcgis.com/arcgis/rest/services/Tools/ElevationSync/GPServer/Profile/execute';
         var dataPoints = [];
         var ilf= {fields: [{name: "OID", type: "esriFieldTypeObjectID", alias: "OID"}], 
             geometryType:"esriGeometryPolyline",
@@ -138,9 +125,7 @@ $(document).ready(function () {
             dataType: "json",
             data: data,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            url: encodeURI(arcgis).replace(/[!'()*\{\}]/g, function(c) {
-                return '%' + c.charCodeAt(0).toString(16);
-            }).replace(/%25/g, '%'),
+            url: config.gisurl,
             success: function(data){
                 var geojson = {"name":"elevation.geojson","type":"FeatureCollection","features":[{"type":"Feature","geometry":{},"properties":null}]};
                 geojson.features[0].geometry = {"type":"LineString","coordinates":data.results[0].value.features[0].geometry.coordinates};

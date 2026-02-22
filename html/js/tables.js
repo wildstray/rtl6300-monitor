@@ -1,11 +1,9 @@
-var lteurl='http://172.20.168.1/restful/';
-var refresh=5000;
-
 function makeTable(table) {
     title = table.id.substring(table.id.search('/')+1, table.id.length);
     $(table).DataTable({
         ajax: {
-            url: lteurl + table.id,
+            url: config.cpeurl+'/'+table.id,
+            cache: true,
             dataSrc: function(data) {
                 if (data.Result.hasOwnProperty('data')) {
                     return data.Result.data.flatMap(obj => [["-", "-"], ...Object.entries(obj)]);
@@ -41,7 +39,8 @@ $(document).ready(function() {
     setInterval(function() {
         $('.table.refresh').each(function(index, table) {
             const dataTable = $(table).DataTable();
-            dataTable.ajax.url(lteurl + table.id).load();
+            dataTable.ajax.url(config.cpeurl+'/'+table.id).load();
         });
-    }, refresh);
+    }, config.refresh);
+
 });
