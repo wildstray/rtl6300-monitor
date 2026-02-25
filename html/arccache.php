@@ -38,6 +38,23 @@ if ($cursor->isDead())
         echo "Insert failed: " . $e->getMessage() . PHP_EOL;
         die();
     }
+
+    $command = new MongoDB\Driver\Command([
+        'listIndexes' => $collection,
+    ]);
+    try {
+        $cursor = $manager->executeCommand($database, $command);
+    } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
+        http_response_code(500);
+        echo "listIndexes failed: " . $e->getMessage() . PHP_EOL;
+        die();
+    }
+    $indexes = array_map(fn($index) => $index->name, $cursor->toArray());
+    if (in_array('ilf_index', $indexes)) {
+        echo $response, PHP_EOL;
+        exit;
+    }
+
     $indexKey = ['ilf' => 1];
     $createIndexCommand = new MongoDB\Driver\Command([
         'createIndexes' => $collection,
@@ -51,7 +68,7 @@ if ($cursor->isDead())
         $manager->executeCommand($database, $createIndexCommand);
     } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
         http_response_code(500);
-        echo "Index failed: " . $e->getMessage() . PHP_EOL;
+        echo "createIndexes failed: " . $e->getMessage() . PHP_EOL;
         die();
     }
     echo $response, PHP_EOL;

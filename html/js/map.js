@@ -28,8 +28,8 @@ $(document).ready(function () {
     var controlElevation = L.control.elevation(elevationOptions).addTo(map);
     var group = L.featureGroup().addTo(map);
     var markerArray = [];
-    var lastGCI = 0;
-
+    let state = {type: "", gci: "", mcc: "", mnc: "", tac: "", enb: ""};
+    let lastState = { ...state };
     var cpePoint = config.home;
     var cpeIcon = L.IconMaterial.icon({
         icon: 'home',
@@ -44,12 +44,12 @@ $(document).ready(function () {
     }, config.refresh);
 
     function getDistance(origin, destination) {
-        var lon1 = origin[1]*Math.PI/180,
-            lat1 = origin[0]*Math.PI/180,
-            lon2 = destination[1]*Math.PI/180,
-            lat2 = destination[0]*Math.PI/180;
+        var lon1 = origin[1] * Math.PI / 180,
+            lat1 = origin[0] * Math.PI / 180,
+            lon2 = destination[1] * Math.PI / 180,
+            lat2 = destination[0] * Math.PI / 180;
 
-        var a = Math.pow(Math.sin((lat2 - lat1)/ 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin((lon2 - lon1)/2), 2);
+        var a = Math.pow(Math.sin((lat2 - lat1) / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin((lon2 - lon1) / 2), 2);
         var c = 2 * Math.asin(Math.sqrt(a));
         var EARTH_RADIUS = 6371;
         return c * EARTH_RADIUS * 1000;
@@ -78,10 +78,15 @@ $(document).ready(function () {
                 markerColor: 'rgba(6,255,6,0.5)',
             });
         }
+        const params = new URLSearchParams({
+            mcc: mcc,
+            mnc: mnc,
+            enb: enb
+        });
         $.ajax({ 
             type: "GET",
             dataType: "json",
-            url: 'ltegeo.php?mcc='+mcc+'&mnc='+mnc+'&enb='+enb,
+            url: `ltegeo.php?${params.toString()}`,
             success: function(data){
                 btsPoint = [data.location.coordinates[1],data.location.coordinates[0]];
                 var distance = getDistance(cpePoint, btsPoint).toFixed(2);
@@ -98,16 +103,12 @@ $(document).ready(function () {
         $.ajax({ 
             type: "GET",
             dataType: "json",
-            url: config.cpeurl+'/lte/cellular_info',
+            url: `${config.cpeurl}/lte/cellular_info`,
             success: function(data){
-                var gci = data.Result.gci;
-                var mcc = data.Result.mcc;
-                var mnc = data.Result.mnc;
-                var tac = data.Result.tac;
-                var enb = data.Result.enb;
-                var type = data.Result.type;
-                if(lastGCI != gci) {
-                    lastGCI = gci;
+                const {type, gci, mcc, mnc, tac, enb} = data.Result;
+                Object.assign(state, {type, gci, mcc, mnc, tac, enb});
+                if (Object.keys(state).some(key => state[key] !== lastState[key])) {
+                    lastState = { ...state };
                     drawCell(mcc, mnc, enb, type);
                 }
             }

@@ -1,8 +1,8 @@
 function makeTable(table) {
-    title = table.id.substring(table.id.search('/')+1, table.id.length);
+    title = table.id.substring(table.id.indexOf('/') + 1);
     $(table).DataTable({
         ajax: {
-            url: config.cpeurl+'/'+table.id,
+            url: `${config.cpeurl}/${table.id}`,
             cache: true,
             dataSrc: function(data) {
                 if (data.Result.hasOwnProperty('data')) {
@@ -39,7 +39,7 @@ $(document).ready(function() {
     setInterval(function() {
         $('.table.refresh').each(function(index, table) {
             const dataTable = $(table).DataTable();
-            dataTable.ajax.url(config.cpeurl+'/'+table.id).load();
+            dataTable.ajax.url(`${config.cpeurl}/${table.id}`).load();
         });
     }, config.refresh);
 

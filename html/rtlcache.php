@@ -99,4 +99,3 @@ ob_end_flush();
 flush();
 fastcgi_finish_request();
 rtlcache($url, $manager, $database, $collection);
-
