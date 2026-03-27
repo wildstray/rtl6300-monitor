@@ -27,6 +27,8 @@
     <script src="https://unpkg.com/leaflet-providers@latest/leaflet-providers.js"></script>
     <!-- map -->
     <script src="js/map.js" defer></script>
+    <!-- speed -->
+    <script src="js/speed.js" defer></script>
     <!-- favicon -->
     <link rel="apple-touch-icon" sizes="57x57" href="favicon/favicon-57x57.png" type="image/png" />
     <link rel="apple-touch-icon" sizes="60x60" href="favicon/favicon-60x60.png" type="image/png" />
@@ -70,8 +72,28 @@
     <table id="lte/cellular_info_nr5g_sa" class="table refresh"></table>
     <br/>
     -->
-</div>
-<div class="center">
+    <div class="wrap">
+        <h2>speed test</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="label">Ping</div>
+                <div class="value" id="val-ping">—</div>
+                <div class="unit">ms</div>
+            </div>
+            <div class="card">
+                <div class="label">Download</div>
+                <div class="value" id="val-dl">—</div>
+                <div class="unit">Mbps</div>
+            </div>
+            <div class="card">
+                <div class="label">Upload</div>
+                <div class="value" id="val-ul">—</div>
+                <div class="unit">Mbps</div>
+            </div>
+        </div>
+        <button id="st-btn">Start speed test</button>
+    </div>
+    <br/>
     <div id="map"></div>
 </div>
 </html>
