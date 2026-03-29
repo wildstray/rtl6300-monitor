@@ -1,5 +1,5 @@
 function speedtest(type) {
-    var ul = $.ajax({
+    return $.ajax({
         url: 'speed.php?test='+type,
         method: 'GET',
         dataType: 'json',

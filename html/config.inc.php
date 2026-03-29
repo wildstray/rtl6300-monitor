@@ -15,7 +15,7 @@ return [
         'ping_url' => 'https://www.cloudflare.com/cdn-cgi/trace',
         'ping_attempts' => 3,
         'timeout' => 5000,
-        'download_url' => 'https://speed.cloudflare.com/__down?bytes=75000000',
+        'download_url' => 'https://speed.cloudflare.com/__down?bytes=60000000',
         'upload_url' => 'https://speed.cloudflare.com/__up',
         'upload_size' => 15000000,
         'referer' => 'https://speed.cloudflare.com/',
