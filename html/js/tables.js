@@ -13,34 +13,36 @@ function makeTable(table) {
             }
         },
         columns: [{ title: title }, null],
-        searching: false,
-        ordering: false,
-        paging: false,
-        info: false,
-        destroy: true
     });
     $('thead th:first-child').attr('colspan',2);
     $('thead th:last-child').hide();
 }
 
-$(document).ready(function() {
-    $.extend($.fn.dataTable.defaults, {
-        searching: false,
-        ordering:  false,
-        paging: false,
-        info: false,
-        destroy: true
+function refreshTables() {
+    if (document.hidden)
+        return;
+    $('.table.refresh').each(function(index, table) {
+        const dataTable = $(table).DataTable();
+        dataTable.ajax.url(`${config.cpeurl}/${table.id}`).load();
     });
+}
 
-    $('.table').each(function(index, table) {
-        makeTable(table);
-    });
+$.extend($.fn.dataTable.defaults, {
+    searching: false,
+    ordering:  false,
+    paging: false,
+    info: false,
+    destroy: false
+});
 
-    setInterval(function() {
-        $('.table.refresh').each(function(index, table) {
-            const dataTable = $(table).DataTable();
-            dataTable.ajax.url(`${config.cpeurl}/${table.id}`).load();
-        });
-    }, config.refresh);
+$('.table').each(function(index, table) {
+    makeTable(table);
+});
 
+setInterval(function() {
+    refreshTables();
+}, config.refresh);
+
+document.addEventListener("visibilitychange", () => {
+    refreshTables();
 });
